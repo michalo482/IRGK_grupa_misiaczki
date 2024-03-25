@@ -16,6 +16,7 @@ class BTID_POC_API AEnemyCharacter : public ACharacterBase, public IEnemyInterfa
 	GENERATED_BODY()
 
 public:
+	AEnemyCharacter();
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 

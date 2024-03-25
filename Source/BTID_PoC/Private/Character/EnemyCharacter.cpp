@@ -3,12 +3,23 @@
 
 #include "Character/EnemyCharacter.h"
 
+#include "BTID_PoC/BTID_PoC.h"
+
+AEnemyCharacter::AEnemyCharacter()
+{
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+}
+
 void AEnemyCharacter::HighlightActor()
 {
-	bHighlighted = true;
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	Weapon->SetRenderCustomDepth(true);
+	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 }
 
 void AEnemyCharacter::UnHighlightActor()
 {
-	bHighlighted = false;
+	GetMesh()->SetRenderCustomDepth(false);
+	Weapon->SetRenderCustomDepth(false);
 }
