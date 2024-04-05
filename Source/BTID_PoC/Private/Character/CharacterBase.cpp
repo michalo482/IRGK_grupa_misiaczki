@@ -15,6 +15,11 @@ ACharacterBase::ACharacterBase()
 
 }
 
+UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 
 void ACharacterBase::BeginPlay()
 {

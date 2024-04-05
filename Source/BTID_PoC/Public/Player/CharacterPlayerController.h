@@ -34,9 +34,17 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MaveAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> JumpAction;
+	
 	void Move(const FInputActionValue& InputActionValue);
+	void Jump();
+	void StopJump();
+	
 
 	void CursorTrace();
 	IEnemyInterface* LastActor;
 	IEnemyInterface* ThisActor;
+
+	bool bIgnoreRotationDuringJump;
 };

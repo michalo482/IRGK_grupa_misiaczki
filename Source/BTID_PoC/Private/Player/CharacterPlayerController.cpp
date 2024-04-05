@@ -4,11 +4,13 @@
 #include "Player/CharacterPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/Character.h"
 #include "Interaction/EnemyInterface.h"
 
 ACharacterPlayerController::ACharacterPlayerController()
 {
 	bReplicates = true;
+	bIgnoreRotationDuringJump = false;
 }
 
 void ACharacterPlayerController::PlayerTick(float DeltaTime)
@@ -16,7 +18,6 @@ void ACharacterPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
-
 }
 
 void ACharacterPlayerController::CursorTrace()
@@ -32,11 +33,11 @@ void ACharacterPlayerController::CursorTrace()
 	* Kilka scenariuszy:
 	* a) LastActor = null i ThisActor = null
 	*	- nic nie robi
-	* b) LastActor = null ale ThisActor = valis
+	* b) LastActor = null ale ThisActor = valid
 	*	- Highlight ThisActor
 	* c) LastActor = valis ale ThisActor = null
 	*	- UnHighlight
-	* d) LastActor != ThisActor ale oba s¹ valid
+	* d) LastActor != ThisActor ale oba sï¿½ valid
 	*	- UnHighlight LastActor, Highlight ThisActor
 	* 
 	*/
@@ -93,8 +94,10 @@ void ACharacterPlayerController::SetupInputComponent()
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
+	
 	EnhancedInputComponent->BindAction(MaveAction, ETriggerEvent::Triggered, this, &ACharacterPlayerController::Move);
-
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacterPlayerController::Jump);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacterPlayerController::StopJump);
 }
 
 void ACharacterPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -108,9 +111,33 @@ void ACharacterPlayerController::Move(const FInputActionValue& InputActionValue)
 
 	if (APawn* ControlledPawn = GetPawn<APawn>()) 
 	{
-		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
-		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+		
+			ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
+			ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+		
 	}
 }
+
+void ACharacterPlayerController::Jump()
+{
+	
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		Cast<ACharacter>(ControlledPawn)->Jump();
+		bIgnoreRotationDuringJump = true;
+	}
+}
+
+void ACharacterPlayerController::StopJump()
+{
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		Cast<ACharacter>(ControlledPawn)->StopJumping();
+		bIgnoreRotationDuringJump = false;
+	}
+}
+
+
+
 
 
